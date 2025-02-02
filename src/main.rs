@@ -21,13 +21,13 @@ async fn run_gpu_compute(){
     let input_image_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
         label: Some("Input Image Buffer"),
         contents: &image_data,
-        usage: wgpu::BufferUsages::STORAGE | wgpu:BufferUsagese::COPY_SRC,
+        usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
     });
 
-    let output_image_buffer = device.create_buffer(desciptor: &wgpu::BufferDescriptor {
+    let output_image_buffer = device.create_buffer(&wgpu::BufferDescriptor {
         label: Some("Output Image Buffer"),
         size: (width * height * 4) as u64,
-        usage: wgpu::BufferUsage::STORAGE | wgpu::BufferUsage::COPY_DST,
+        usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
         mapped_at_creation: false,
     });
 
@@ -63,7 +63,7 @@ async fn run_gpu_compute(){
     });
 
     //This part is resposible for encoding of the GPU commands
-    let mut encoder = device.create_command_encoder(desciptor: &wgpu::CommandEncoderDescriptor {
+    let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
         label: Some("Command Encoder"),
     });
 
@@ -78,10 +78,10 @@ async fn run_gpu_compute(){
     }
 
     //This copies the result to the CPU-readable buffer
-    let staging_buffer = device.create_buffer(desciptor: &wgpu::BufferDescriptor {
+    let staging_buffer = device.create_buffer(&wgpu::BufferDescriptor {
         label: Some("Staging Buffer"),
         size: (width * height * 4) as u64,
-        usage: wgpu::BufferUsage::MAP_READ | wgpu::BufferUsage::COPY_DST,
+        usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
         mapped_at_creation: false,
     });
 
@@ -91,12 +91,12 @@ async fn run_gpu_compute(){
     //This part is responsible for reading the results
 
     let buffer_slice = staging_buffer.slice(..);
-    buffer_slice.map_async(wgpu::MapMode::Read);
+    buffer_slice.map_async(wgpu::MapMode::Read, |_| {});
 
     device.poll(wgpu::Maintain::Wait);
     let data = buffer_slice.get_mapped_range().to_vec();
     let output_img = image::RgbaImage::from_raw(width, height, data).expect("Failed to create image");
-    output_img.save(path: "src/output.png").expect("Failed to save image");
+    output_img.save("src/output.png").expect("Failed to save image");
 
     println!("Gaussian Blur has been applied and Image processed and saved to `output.png`");
 }
