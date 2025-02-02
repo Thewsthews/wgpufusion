@@ -1,10 +1,12 @@
-use wgpu::{core::{device::{self, WaitIdleError}, instance}, util::DeviceExt, Adapter};
+use wgpu::util::DeviceExt;
 use pollster::block_on;
-use image::{buffer, DynamicImage, GenericImageView};
 
 async fn run_gpu_compute(){
     //initializes the GPU
-    let instance = wgpu::Instance::new(wgpu::BackendBit::all());
+    let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor {
+        backends: wgpu::Backends::all(),
+        dx12_shader_compiler: Default::default(),
+    });
     let adapter = instance.request_adapter(&wgpu::RequestAdapterOptions::default())
         .await.expect("Failed to find a GPU adapter");
      let (device, queue) = adapter.request_device(&wgpu::DeviceDescriptor::default(), None)
@@ -16,10 +18,10 @@ async fn run_gpu_compute(){
     let (width, height) = image.dimensions();
     let image_data = image.to_rgba8().into_raw();
 
-    let input_image_buffer = device.craete_buffer_init(&wgpu::util::BufferInitDescriptor {
+    let input_image_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
         label: Some("Input Image Buffer"),
         contents: &image_data,
-        usage: wgpu::BufferUsage::STORAGE | wgpu::BufferUsage::COPY_SRC,
+        usage: wgpu::BufferUsages::STORAGE | wgpu:BufferUsagese::COPY_SRC,
     });
 
     let output_image_buffer = device.create_buffer(desciptor: &wgpu::BufferDescriptor {
