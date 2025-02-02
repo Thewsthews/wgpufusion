@@ -94,7 +94,9 @@ async fn run_gpu_compute(){
     device.poll(wgpu::Maintain::Wait);
     let data = buffer_slice.get_mapped_range().to_vec();
     let output_img = image::RgbaImage::from_raw(width, height, data).expect("Failed to create image");
-    
+    output_img.save(path: "src/output.png").expect("Failed to save image");
+
+    println!("Gaussian Blur has been applied and Image processed and saved to `output.png`");
 }
 
 fn main() {
