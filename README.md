@@ -100,6 +100,6 @@ This project is licensed under the **MIT License** – feel free to use and modi
 ## 📞 Contact
 For any queries or contributions, reach out:
 📧 Email: etiegnim@gmail.com  
-🐙 GitHub: [Your GitHub](https://github.com/Thewsthews)
+🐙 GitHub: [Me](https://github.com/Thewsthews)
 
 M1
