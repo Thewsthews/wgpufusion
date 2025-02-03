@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use wgpu::util::DeviceExt;
 use pollster::block_on;
 
@@ -5,7 +7,8 @@ async fn run_gpu_compute(){
     //initializes the GPU
     let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor {
         backends: wgpu::Backends::all(),
-        dx12_shader_compiler: Default::default(),
+        backend_options: Default::default(),
+        flags: todo!(),
     });
     let adapter = instance.request_adapter(&wgpu::RequestAdapterOptions::default())
         .await.expect("Failed to find a GPU adapter");
@@ -34,7 +37,7 @@ async fn run_gpu_compute(){
     //This part is responsible for the loading of the shader
 
     let shader_code = include_str!("compute.wsgl");
-    let shader_module = device.create_shader_module(&wgpu::ShaderModuleDescriptor {
+    let shader_module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
         label: Some("Compute Shader"),
         source: wgpu::ShaderSource::Wgsl(shader_code.into()),
     });
@@ -43,7 +46,9 @@ async fn run_gpu_compute(){
         label: Some("Compute Pipeline"),
         layout: None,
         module: &shader_module,
-        entry_point: "gaussian_blur",
+        entry_point: Some("gaussian_blur"),
+        compilation_options: todo!(),
+        cache: todo!(),
     });
 
     let bind_group_layout = compute_pipeline.get_bind_group_layout(0);
@@ -70,11 +75,12 @@ async fn run_gpu_compute(){
     {
         let mut compute_pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
             label: Some("Compute Pass"),
+            timestamp_writes: todo!(),
         });
 
         compute_pass.set_pipeline(&compute_pipeline);
         compute_pass.set_bind_group(0, &bind_group, &[]);
-        compute_pass.dispatch(width / 8, height / 8, 1);
+        Arc::new(compute_pass)(width / 8, height / 8, 1);
     }
 
     //This copies the result to the CPU-readable buffer
