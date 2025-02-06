@@ -57,11 +57,11 @@ async fn run_gpu_compute(){
         entries: &[
             wgpu::BindGroupEntry {
                 binding: 0,
-                resource: wgpu::BindingResource::Buffer(input_image_buffer.slice(..)),
+                resource: wgpu::BindingResource::Buffer(input_image_buffer.as_entire_buffer_binding()),
             },
             wgpu::BindGroupEntry {
                 binding: 1,
-                resource: wgpu::BindingResource::Buffer(output_image_buffer.slice(..)),
+                resource: wgpu::BindingResource::Buffer(output_image_buffer.as_entire_buffer_binding()),
             },
         ],
     });
