@@ -1,4 +1,4 @@
-
+use image::GenericImageView;
 use wgpu::util::DeviceExt;
 use pollster::block_on;
 
@@ -46,8 +46,6 @@ async fn run_gpu_compute(){
         layout: None,
         module: &shader_module,
         entry_point: Some("gaussian_blur"),
-        compilation_options: todo!(),
-        cache: todo!(),
     });
 
     let bind_group_layout = compute_pipeline.get_bind_group_layout(0);
