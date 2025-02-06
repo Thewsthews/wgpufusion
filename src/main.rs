@@ -74,12 +74,12 @@ async fn run_gpu_compute(){
     {
         let mut compute_pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
             label: Some("Compute Pass"),
-            timestamp_writes: todo!(),
+            timestamp_writes: None,
         });
 
         compute_pass.set_pipeline(&compute_pipeline);
         compute_pass.set_bind_group(0, &bind_group, &[]);
-        compute_pass.dispatch(width / 8, height / 8, 1);
+        compute_pass.dispatch_workgroups(width / 8, height / 8, 1);
     }
 
     //This copies the result to the CPU-readable buffer
