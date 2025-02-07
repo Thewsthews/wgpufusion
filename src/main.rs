@@ -47,7 +47,7 @@ async fn run_gpu_compute(){
         module: &shader_module,
         entry_point: Some("gaussian_blur"),
         cache: None,
-        compilation_options:None,
+       std::compilation_options:None,
     });
 
     let bind_group_layout = compute_pipeline.get_bind_group_layout(0);
