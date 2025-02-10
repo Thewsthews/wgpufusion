@@ -63,8 +63,7 @@ Applies **GPU-based Gaussian blur** to images for high-speed filtering.
 rustgpux/
 ├── src/
 │   ├── main.rs        # Entry point for GPU computations
-│   ├── compute.rs     # GPU compute functions (vector add, reduction, etc.)
-│   ├── shaders/       # WGSL compute shaders
+│   ├── compute.wsgl   # GPU compute functions (vector add, reduction, etc.)
 ├── Cargo.toml         # Dependencies and project configuration
 ├── README.md          # Project documentation
 ```
