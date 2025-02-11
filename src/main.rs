@@ -16,7 +16,7 @@ async fn run_gpu_compute(){
 
     // This is the Image Processing handler (Glaussian Blur) ---
 
-    let image = image::open("src/example.png").unwrap();
+    let image = image::open("src/eggs.jpg").unwrap();
     let (width, height) = image.dimensions();
     let image_data = image.to_rgba8().into_raw();
 
