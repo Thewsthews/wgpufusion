@@ -29,7 +29,7 @@ async fn run_gpu_compute(){
     let output_image_buffer = device.create_buffer(&wgpu::BufferDescriptor {
         label: Some("Output Image Buffer"),
         size: (width * height * 4) as u64,
-        usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+        usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::COPY_SRC,
         mapped_at_creation: false,
     });
 
