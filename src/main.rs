@@ -109,5 +109,3 @@ async fn run_gpu_compute(){
 fn main() {
     block_on(run_gpu_compute());
 }
-
-//M1
