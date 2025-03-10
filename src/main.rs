@@ -1,6 +1,7 @@
 use image::GenericImageView;
 use wgpu::util::DeviceExt;
 use pollster::block_on;
+use clap::{Parser, Subcommand}
 
 async fn run_gpu_compute(){
     //initializes the GPU
