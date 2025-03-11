@@ -1,10 +1,36 @@
 use image::GenericImageView;
 use wgpu::util::DeviceExt;
 use pollster::block_on;
-use clap::{Parser, Subcommand}
+use clap::{Parser, Subcommand};
 
-async fn run_gpu_compute(){
-    //initializes the GPU
+#[derive(Parser)]
+#[command(name = "GPU Image Processor")]
+#[command(about = "Applies GPU-accelerated image processing effects", long_about = None)]
+struct Cli {
+    #[command(subcommand)]
+    command: Commands,
+}
+
+#[derive(Subcommand)]
+enum Commands {
+    /// Applies a Gaussian blur to an image
+    Blur {
+        /// Input image file path
+        #[arg(short, long, default_value = "src/eggs.jpg")]
+        input: String,
+        
+        /// Output image file path
+        #[arg(short, long, default_value = "src/output.png")]
+        output: String,
+        
+        /// Blur intensity (1-10)
+        #[arg(short, long, default_value_t = 1.0)]
+        intensity: f32,
+    },
+}
+
+async fn run_gpu_compute(input_path: &str, output_path: &str, intensity: f32) {
+    // GPU initialization
     let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor {
         backends: wgpu::Backends::all(),
         backend_options: Default::default(),
@@ -12,12 +38,11 @@ async fn run_gpu_compute(){
     });
     let adapter = instance.request_adapter(&wgpu::RequestAdapterOptions::default())
         .await.expect("Failed to find a GPU adapter");
-     let (device, queue) = adapter.request_device(&wgpu::DeviceDescriptor::default(), None)
+    let (device, queue) = adapter.request_device(&wgpu::DeviceDescriptor::default(), None)
         .await.expect("Failed to create GPU device");
 
-    // This is the Image Processing handler (Glaussian Blur) ---
-
-    let image = image::open("src/eggs.jpg").unwrap();
+    // Load and prepare image
+    let image = image::open(input_path).expect("Failed to open input image");
     let (width, height) = image.dimensions();
     let image_data = image.to_rgba8().into_raw();
 
@@ -34,9 +59,13 @@ async fn run_gpu_compute(){
         mapped_at_creation: false,
     });
 
-    //This part is responsible for the loading of the shader
+    // Modified shader code with intensity parameter
+    let shader_template = include_str!("compute.wgsl");
+    let shader_code = shader_template
+    .replace("WIDTH_PLACEHOLDER", &width.to_string())
+    .replace("HEIGHT_PLACEHOLDER", &height.to_string())
+    .replace("INTENSITY_PLACEHOLDER", &intensity.to_string());
 
-    let shader_code = include_str!("compute.wsgl");
     let shader_module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
         label: Some("Compute Shader"),
         source: wgpu::ShaderSource::Wgsl(shader_code.into()),
@@ -67,7 +96,6 @@ async fn run_gpu_compute(){
         ],
     });
 
-    //This part is resposible for encoding of the GPU commands
     let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
         label: Some("Command Encoder"),
     });
@@ -83,7 +111,6 @@ async fn run_gpu_compute(){
         compute_pass.dispatch_workgroups(width / 8, height / 8, 1);
     }
 
-    //This copies the result to the CPU-readable buffer
     let staging_buffer = device.create_buffer(&wgpu::BufferDescriptor {
         label: Some("Staging Buffer"),
         size: (width * height * 4) as u64,
@@ -94,19 +121,25 @@ async fn run_gpu_compute(){
     encoder.copy_buffer_to_buffer(&output_image_buffer, 0, &staging_buffer, 0, output_image_buffer.size());
     queue.submit(std::iter::once(encoder.finish()));
 
-    //This part is responsible for reading the results
-
     let buffer_slice = staging_buffer.slice(..);
     buffer_slice.map_async(wgpu::MapMode::Read, |_| {});
 
     device.poll(wgpu::Maintain::Wait);
     let data = buffer_slice.get_mapped_range().to_vec();
     let output_img = image::RgbaImage::from_raw(width, height, data).expect("Failed to create image");
-    output_img.save("src/output.png").expect("Failed to save image");
+    output_img.save(output_path).expect("Failed to save image");
 
-    println!("Gaussian Blur has been applied and Image processed and saved to `output.png`");
+    println!("Gaussian Blur (intensity: {}) applied and saved to {}", intensity, output_path);
 }
 
 fn main() {
-    block_on(run_gpu_compute());
+    let cli = Cli::parse();
+
+    match cli.command {
+        Commands::Blur { input, output, intensity } => {
+            // Validate intensity
+            let intensity = intensity.clamp(1.0, 10.0);
+            block_on(run_gpu_compute(&input, &output, intensity));
+        }
+    }
 }

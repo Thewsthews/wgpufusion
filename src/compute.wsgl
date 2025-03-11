@@ -1,10 +1,17 @@
 @group(0) @binding(0) var<storage, read> input_img: array<u32>;
 @group(0) @binding(1) var<storage, read_write> output_img: array<u32>;
 
-fn gaussian_blur_kernel(x: i32, y: i32, width: i32, height: i32) -> vec4<f32> {
-    let kernel: array<f32, 9> = array<f32, 9>(0.0625, 0.125, 0.0625,
-                                              0.125,  0.25,  0.125,
-                                              0.0625, 0.125, 0.0625);
+fn gaussian_blur_kernel(x: i32, y: i32, width: i32, height: i32, intensity: f32) -> vec4<f32> {
+    let base_kernel: array<f32, 9> = array<f32, 9>(0.0625, 0.125, 0.0625,
+                                                  0.125,  0.25,  0.125,
+                                                  0.0625, 0.125, 0.0625);
+    var kernel: array<f32, 9>;
+    let intensity_factor = intensity * 0.1;
+    
+    for (var i = 0u; i < 9u; i++) {
+        kernel[i] = base_kernel[i] * intensity_factor + (1.0 - intensity_factor) * f32(i == 4u);
+    }
+    
     var sum: vec4<f32> = vec4<f32>(0.0);
     
     for (var i: i32 = -1; i <= 1; i++) {
@@ -13,18 +20,20 @@ fn gaussian_blur_kernel(x: i32, y: i32, width: i32, height: i32) -> vec4<f32> {
             let iy = clamp(y + j, 0, height - 1);
             let index = iy * width + ix;
             let pixel = vec4<f32>(vec3<f32>(f32((input_img[index] >> 16) & 0xFF),
-                                            f32((input_img[index] >> 8) & 0xFF),
-                                            f32(input_img[index] & 0xFF)) / 255.0, 1.0);
+                                           f32((input_img[index] >> 8) & 0xFF),
+                                           f32(input_img[index] & 0xFF)) / 255.0, 1.0);
             sum += pixel * kernel[(i+1) * 3 + (j+1)];
         }
     }
     return sum;
 }
 
-@compute @workgroup_size(16, 16)
+@compute @workgroup_size(8, 8)
 fn gaussian_blur(@builtin(global_invocation_id) id: vec3<u32>) {
-    let width: i32 = 512;
-    let height: i32 = 512;
+    let width: i32 = WIDTH_PLACEHOLDER;
+    let height: i32 = HEIGHT_PLACEHOLDER;
+    let intensity: f32 = INTENSITY_PLACEHOLDER;
+    
     let x: i32 = i32(id.x);
     let y: i32 = i32(id.y);
     let index: u32 = id.y * u32(width) + id.x;
@@ -33,6 +42,6 @@ fn gaussian_blur(@builtin(global_invocation_id) id: vec3<u32>) {
         return;
     }
     
-    let color = gaussian_blur_kernel(x, y, width, height) * 255.0;
+    let color = gaussian_blur_kernel(x, y, width, height, intensity) * 255.0;
     output_img[index] = (u32(color.x) << 16) | (u32(color.y) << 8) | u32(color.z) | (0xFF << 24);
 }
