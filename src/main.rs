@@ -4,10 +4,9 @@ use pollster::block_on;
 use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
-#[command(name = "GPU Image Processor")]
-#[command(about = "Applies GPU-accelerated image processing effects", long_about = None)]
+#[clap(name = "GPU Image Processor", about = "Applies GPU-accelerated image processing effects", long_about = None)]
 struct Cli {
-    #[command(subcommand)]
+    #[clap(subcommand)]
     command: Commands,
 }
 
@@ -16,15 +15,15 @@ enum Commands {
     /// Applies a Gaussian blur to an image
     Blur {
         /// Input image file path
-        #[arg(short, long, default_value = "src/eggs.jpg")]
+        #[clap(short, long, default_value = "src/eggs.jpg")]
         input: String,
         
         /// Output image file path
-        #[arg(short, long, default_value = "src/output.png")]
+        #[clap(short, long, default_value = "src/output.png")]
         output: String,
         
         /// Blur intensity (1-10)
-        #[arg(short, long, default_value_t = 1.0)]
+        #[clap(short, long, default_value_t = 1.0)]
         intensity: f32,
     },
 }

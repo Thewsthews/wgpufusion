@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 bytemuck = "1.21.0"
+clap = "4.5.32"
 image = "0.25.5"
 pollster = "0.4.0"
 wgpu = "24.0.1"
-clap = "4.5.32"
