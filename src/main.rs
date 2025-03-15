@@ -14,15 +14,12 @@ struct Cli {
 enum Commands {
     /// Applies a Gaussian blur to an image
     Blur {
-        /// Input image file path
         #[clap(short, long, default_value = "src/eggs.jpg")]
         input: String,
         
-        /// Output image file path
         #[clap(short, long, default_value = "src/output.png")]
         output: String,
         
-        /// Blur intensity (1-10)
         #[clap(short, long, default_value_t = 1.0)]
         intensity: f32,
     },
@@ -59,7 +56,7 @@ async fn run_gpu_compute(input_path: &str, output_path: &str, intensity: f32) {
     });
 
     // Modified shader code with intensity parameter
-    let shader_template = include_str!("compute.wgsl");
+    let shader_template = include_str!("compute.wsgl");
     let shader_code = shader_template
     .replace("WIDTH_PLACEHOLDER", &width.to_string())
     .replace("HEIGHT_PLACEHOLDER", &height.to_string())
