@@ -1,4 +1,4 @@
-# 🚀 wgpufusion - High-Performance GPU Compute in Rust
+# wgpufusion - High-Performance GPU Compute in Rust
 
 RustGPUX is a high-performance GPU compute framework in Rust that utilizes **wgpu** to run advanced parallel computations on the GPU. It includes:
 
@@ -8,7 +8,7 @@ RustGPUX is a high-performance GPU compute framework in Rust that utilizes **wgp
 ✅ **Gaussian Blur** – GPU-powered image processing.  
 ✅ **Workgroup Optimization** – Fast shared memory optimizations.  
 
-## ✨ Features
+## Features
 - 🚀 **Blazing Fast Computation** – Leverage GPU parallelism for high-speed number crunching.
 - 🖼 **GPU Image Processing** – Perform Gaussian blur on images.
 - 📊 **Optimized Workgroup Usage** – Use efficient workgroup shared memory.
