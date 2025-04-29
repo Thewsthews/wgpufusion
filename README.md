@@ -16,7 +16,7 @@ RustGPUX is a high-performance GPU compute framework in Rust that utilizes **wgp
 
 ---
 
-## ⚡ Getting Started
+## Getting Started
 
 ### **1️⃣ Install Rust & Dependencies**
 Ensure you have **Rust** installed:
