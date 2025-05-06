@@ -58,7 +58,7 @@ Applies **GPU-based Gaussian blur** to images for high-speed filtering.
 
 ---
 
-## 🛠 Project Structure
+## Project Structure
 ```plaintext
 rustgpux/
 ├── src/
