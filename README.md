@@ -80,7 +80,7 @@ rustgpux/
 
 ---
 
-## 🤝 Contributing
+## Contributing
 We welcome contributions! Feel free to **fork, submit PRs, or report issues.**
 
 1. Fork the repository.
