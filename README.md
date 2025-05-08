@@ -70,7 +70,7 @@ rustgpux/
 
 ---
 
-## 🚀 Performance Benchmarks
+## Performance Benchmarks
 | Operation | CPU Time | GPU Time |
 |-----------|---------|---------|
 | Vector Addition (1M) | ~200ms | **~10ms** |
