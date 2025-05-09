@@ -91,7 +91,7 @@ We welcome contributions! Feel free to **fork, submit PRs, or report issues.**
 
 ---
 
-## 🛡 License
+## License
 This project is licensed under the **MIT License** – feel free to use and modify! ✨
 
 ---
