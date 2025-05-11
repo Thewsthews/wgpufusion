@@ -98,7 +98,7 @@ This project is licensed under the **MIT License** – feel free to use and modi
 
 ## Contact
 For any queries or contributions, reach out:
-📧 Email: etiegnim@gmail.com  
+Email: etiegnim@gmail.com  
 🐙 GitHub: [Me](https://github.com/Thewsthews)
 
 ## STILL A WIP!
